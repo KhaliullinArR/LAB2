@@ -30,16 +30,16 @@ int main(int argc, char* argv[])
         return 1;
     if (!MatrixInput(b, &nb, &mb, argv[2]))
         return 1;
-    
-    if(isZero(a, na, ma))
+
+    if (isZero(a, na, ma))
         a_mult = 0;
     else
-    a_mult = MatrixMultiply(a, &na, &ma);
+        a_mult = MatrixMultiply(a, na, ma);
 
-    if(isZero(b, nb, mb))
-        b_mult=0;
+    if (isZero(b, nb, mb))
+        b_mult = 0;
     else
-    b_mult = MatrixMultiply(b, &nb, &mb);
+        b_mult = MatrixMultiply(b, nb, mb);
 
     fprintf(out, "Исходные данные:\n\nМассив A:\n");
     if (!OutputMatrix(a, na, ma, out))

@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv[])
 {
-    double a[nmax][nmax], b[nmax][nmax];
+    double** a = 0, ** b = 0;
     int ma, na, mb, nb;
     double a_mult, b_mult;
     FILE* out;
@@ -26,27 +26,29 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    if (!MatrixInput(a, &na, &ma, argv[1]))
+    MatrixInput(a, &na, &ma, argv[1]);
+    if (!a)
         return 1;
-    if (!MatrixInput(b, &nb, &mb, argv[2]))
+    MatrixInput(a, &na, &ma, argv[2]);
+    if (!b)
         return 1;
-    
-    if(isZero(a, na, ma))
+
+    if (isZero(a, na, ma))
         a_mult = 0;
     else
-    a_mult = MatrixMultiply(a, &na, &ma);
+        a_mult = MatrixMultiply(a, na, ma);
 
-    if(isZero(b, nb, mb))
-        b_mult=0;
+    if (isZero(b, nb, mb))
+        b_mult = 0;
     else
-    b_mult = MatrixMultiply(b, &nb, &mb);
+        b_mult = MatrixMultiply(b, nb, mb);
 
     fprintf(out, "Исходные данные:\n\nМассив A:\n");
-    if (!OutputMatrix(a, na, ma, out))
+    if (!MatrixOutput(a, na, ma, out))
         return 1;
 
     fprintf(out, "Исходные данные:\n\nМассив B:\n");
-    if (!OutputMatrix(b, nb, mb, out))
+    if (!MatrixOutput(b, nb, mb, out))
         return 1;
 
     if (a_mult == 0 && b_mult == 0) {
@@ -82,8 +84,12 @@ int main(int argc, char* argv[])
     }
 
 
-    /*if (!ResultsProcessing(a, b, &na, &ma, &nb, &mb, a_mult, b_mult))
-        return 1;*/
     fclose(out);
+
+    DeleteMatrix(a, na, ma);
+    DeleteMatrix(b, nb, mb);
+
+    fclose(out);
+
 
 }

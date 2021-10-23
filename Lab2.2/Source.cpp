@@ -33,15 +33,15 @@ int main(int argc, char* argv[])
     if (!b)
         return 1;
 
-    if (ZeroCheck(a, na, ma))
+    if (isZero(a, na, ma))
         a_mult = 0;
     else
-        a_mult = MatrixMultiply(a, &na, &ma);
+        a_mult = MatrixMultiply(a, na, ma);
 
-    if (ZeroCheck(b, nb, mb))
+    if (isZero(b, nb, mb))
         b_mult = 0;
     else
-        b_mult = MatrixMultiply(b, &nb, &mb);
+        b_mult = MatrixMultiply(b, nb, mb);
 
     fprintf(out, "Исходные данные:\n\nМассив A:\n");
     if (!MatrixOutput(a, na, ma, out))
@@ -84,21 +84,10 @@ int main(int argc, char* argv[])
     }
 
 
-    /*if (!ResultsProcessing(a, b, &na, &ma, &nb, &mb, a_mult, b_mult))
-        return 1;*/
     fclose(out);
 
-    for (int i = 0; i < na; i++)
-        delete[] * (a + i);
-    delete[] a;
-
-    a = 0;
-
-    for (int i = 0; i < nb; i++)
-        delete[] * (b + i);
-    delete[] b;
-
-    b = 0;
+    DeleteMatrix(a, na, ma);
+    DeleteMatrix(b, nb, mb);
 
     fclose(out);
     

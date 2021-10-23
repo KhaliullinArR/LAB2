@@ -2,35 +2,50 @@
 #include "Constants_h.h"
 #pragma warning(disable : 4996)
 
-//void PositiveElemsOutput(double a[][nmax], int n, int m, FILE* out) {
-//    for (int i = 0; i < na; i++) {
-//        fprintf(out, "%3d - строка: %2d\n", i + 1, PositiveElemsInRow(a[i],ma));
-//    }
-//}
+int PositiveElemsInARow(double a[], int n) {
+    int num = 0;
+    for (int i = 0; i < n; i++) {
+        if (a[i] > 0)num++;
+    }
+    return num;
+}
 
-bool isZero(double a[][nmax], int n, int m) {
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < m; j++) {
-            if (a[i][j] != 0) return false;
-        }
+
+bool isZeroInARoW(double a[], int n) {
+    for (int i = 0; i < n; i++) {
+        if (a[i] != 0)return false;
+    }
     return true;
 }
 
-double MatrixMultiply(double a[][nmax], int const* n, int const* m) {
+
+
+double MultiplyInARow(double a[], int n) {
     double s = 1;
-    for (int i = 0; i < *n; i++)
-        for (int j = 0; j < *m; j++) {
-            if (a[i][j] != 0)s *= a[i][j];
-        }
+    for (int i = 0; i < n; i++)
+        if (a[i] != 0)s *= a[i];
+    return s;
+}
+
+bool isZero(double a[][nmax], int n, int m) {
+    bool zero = true;
+    for (int i = 0; i < n; i++)
+        zero = zero && isZeroInARoW(a[i], m);
+    return zero;
+}
+
+
+double MatrixMultiply(double a[][nmax], int n, int m) {
+    double s = 1;
+    for (int i = 0; i < n; i++)
+        s *= MultiplyInARow(a[i], m);
     return s;
 }
 
 void PositiveElemsOutput(double a[][nmax], int n, int m, FILE* out) {
     int num = 0;
     for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++)
-            if (a[i][j] > 0)num++;
-        fprintf(out, "%3d - строка: %2d\n", i + 1, num);
+            fprintf(out, "%3d - строка: %2d\n", i + 1, PositiveElemsInARow(a[i], m));
         num = 0;
     }
     return;
