@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     MatrixInput(a, &na, &ma, argv[1]);
     if (!a)
         return 1;
-    MatrixInput(a, &na, &ma, argv[2]);
+    MatrixInput(a, &nb, &mb, argv[2]);
     if (!b)
         return 1;
 
