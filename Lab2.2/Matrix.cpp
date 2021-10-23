@@ -1,13 +1,24 @@
 #include <iostream>
 #pragma warning(disable : 4996)
-double MatrixMultiply(double **a, int const* n, int const* m) {
+
+
+void PositiveElemsOutput(double **a, int na, int ma, FILE* out) {
+    for (int i = 0; i < na; i++) {
+        fprintf(out, "%3d - строка: %2d\n", i + 1, PositiveElemsInRow(a[i], ma));
+    }
+}
+
+bool ZeroCheck(double **a, int n, int m) {
     int num = 0;
-    for (int i = 0; i < *n; i++)
-        for (int j = 0; j < *m; j++) {
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++) {
             if (a[i][j] == 0)num++;
         }
-    if (num == *m * *n) return 0;
+    if (num == m * n) return true;
+    return false;
+}
 
+double MatrixMultiply(double **a, int const* n, int const* m) {
     double s = 1;
     for (int i = 0; i < *n; i++)
         for (int j = 0; j < *m; j++) {
@@ -16,38 +27,48 @@ double MatrixMultiply(double **a, int const* n, int const* m) {
     return s;
 }
 
-int PositiveElemsInRow(double *a, int const* m) {
+int PositiveElemsInRow(double *a, int m) {
     int num = 0;
-    for (int i = 0; i < *m; i++)
+    for (int i = 0; i < m; i++)
         if (a[i] > 0)num++;
     return num;
 }
 
 
-int MatrixInput(double **&a, int* n, int* m, const char* fname) {
+void MatrixInput(double **&a, int* n, int* m, const char* fname) {
     FILE* file;
 
     if ((file = fopen(fname, "r")) == NULL)
     {
         printf("Невозможно открыть файл '%s'\n", fname);
-        return 0;
+        a = 0;
+        return;
     }
     if (fscanf(file, "%d%d", n, m) < 2)
     {
         printf("Ошибка чтения из файла '%s'\n", fname);
         fclose(file);
-        return 0;
+        a = 0;
+        return;
     }
     if (*m < 0 || *n < 0 )
     {
         printf("Количество строк и столбцов матрицы должны быть больше 1!\n");
-        return 0;
+        a = 0;
+        return;
     }
 
     try {
         a = new double* [*n];
         for (int i = 0; i < *n; i++) {
-            a[i] = new double[*m];
+            try {
+                a[i] = new double[*m];
+            }
+            catch (std::bad_alloc) {
+                printf("Не достаточно памяти для выделения массива в файле %s.", fname);
+                a = 0;
+                return;
+            }
         }
     
 
@@ -57,94 +78,31 @@ int MatrixInput(double **&a, int* n, int* m, const char* fname) {
             if (fscanf(file, "%lf", a[i]+j) < 1){
                 printf("Ошибка чтения из файла '%s'\n", fname);
                 fclose(file);
-                return 0;
+                a = 0;
+                return;
             }
     }
     catch (std::bad_alloc) {
         printf("Не достаточно памяти для выделения массива в файле %s.", fname);
-        return 0;
+        a = 0;
+        return;
     }
     fclose(file);
 
-    return 1;
+    return;
 }
 
 
-int ResultsProcessing(double **a, double **b, int const* na, int const* ma, int const* nb, int const* mb, double a_mult, double b_mult) {
-
-    FILE* file;
-    const char* out = "output.txt";
-
-    if ((file = fopen(out, "w")) == NULL)
-    {
-        printf("Невозможно открыть файл для записи\n");
-        return 1;
-    }
-
-    fprintf(file, "Исходные данные:\n\nМассив A:\n");
+int MatrixOutput(double **a,int n, int m, FILE* file) {
 
 
-    for (int i = 0; i < *na; i++) {
-        for (int j = 0; j < *ma; j++)
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++)
             fprintf(file, "%-6g ", a[i][j]);
         fprintf(file, "\n");
     }
 
     fprintf(file, "\n");
 
-    fprintf(file, "Массив B :\n");
-
-    for (int i = 0; i < *nb; i++) {
-        for (int j = 0; j < *mb; j++)
-            fprintf(file, "%-6g ", b[i][j]);
-        fprintf(file, "\n");
-    }
-
-    fprintf(file, "\n");
-
-    if (a_mult == 0 && b_mult == 0) {
-        fprintf(file, "В матрицах A и 'B' все элементы равны нулю.");
-    }
-    else if (a_mult == 0) {
-        fprintf(file, "В матрице A все элементы равны нулю.\n");
-        fprintf(file, "Кол-во положительных элементов в каждой строке матрицы B:\n");
-        for (int i = 0; i < *nb; i++) {
-            fprintf(file, "%3d - строка: %2d\n", i + 1, PositiveElemsInRow(b[i], mb));
-        }
-
-    }
-    else if (b_mult == 0) {
-        fprintf(file, "В матрице 'B' все элементы равны нулю.\n");
-        fprintf(file, "Кол-во положительных элементов в каждой строке матрицы A:\n");
-        for (int i = 0; i < *na; i++) {
-            fprintf(file, "%3d - строка: %2d\n", i + 1, PositiveElemsInRow(a[i], ma));
-        }
-    }
-    else if (a_mult > b_mult) {
-        fprintf(file, "В матрице A произведение элементов больше чем произведение элементов матрицы 'B', которые соответсвенно равны %g и %g\n", a_mult, b_mult);
-        fprintf(file, "Кол-во положительных элементов в каждой строке матрицы A:\n");
-        for (int i = 0; i < *na; i++) {
-            fprintf(file, "%3d - строка: %2d\n", i + 1, PositiveElemsInRow(a[i], ma));
-        }
-    }
-    else if (a_mult < b_mult) {
-        fprintf(file, "В матрице 'B' произведение элементов больше чем произведение элементов матрицы A, которые соответсвенно равны %g и %g", b_mult, a_mult);
-        fprintf(file, "Кол-во положительных элементов в каждой строке матрицы B:\n");
-        for (int i = 0; i < *nb; i++) {
-            fprintf(file, "%3d - строка: %2d\n", i + 1, PositiveElemsInRow(b[i], mb));
-        }
-    }
-    else if (a_mult == b_mult) {
-        fprintf(file, "В матрице 'B' произведение элементов больше равно произведению элементов матрицы A, которые соответсвенно равны %g и %g", b_mult, a_mult);
-        fprintf(file, "Кол-во положительных элементов в каждой строке матрицы B:\n");
-        for (int i = 0; i < *nb; i++) {
-            fprintf(file, "%3d - строка: %2d\n", i + 1, PositiveElemsInRow(b[i], mb));
-        }
-        fprintf(file, "Кол-во положительных элементов в каждой строке матрицы A:\n");
-        for (int i = 0; i < *na; i++) {
-            fprintf(file, "%3d - строка: %2d\n", i + 1, PositiveElemsInRow(a[i], ma));
-        }
-    }
-    fclose(file);
     return 0;
 }

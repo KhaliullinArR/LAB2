@@ -4,9 +4,10 @@
 #include "Constants_h.h"
 
 double MatrixMultiply(double[][nmax], int const*, int const*);
-int PositiveElemsInRow(double[], int const*);
+int PositiveElemsInRow(double[], int);
 int MatrixInput(double[][nmax], int*, int*, const char*);
-int ResultsProcessing(double[][nmax], double[][nmax], int const*, int const*, int const*, int const*, double, double);
-
+int OutputMatrix(double[][nmax], int, int, FILE*);
+bool ZeroCheck(double a[][nmax], int, int);
+void PositiveElemsOutput(double[][nmax], int, int, FILE*);
 #endif // !MATRIX_H
 
