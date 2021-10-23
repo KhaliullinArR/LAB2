@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     MatrixInput(a, &na, &ma, argv[1]);
     if(!a)
         return 1;
-    MatrixInput(a, &nb, &mb, argv[2]);
+    MatrixInput(b, &nb, &mb, argv[2]);
     if (!b)
         return 1;
 
@@ -44,11 +44,11 @@ int main(int argc, char* argv[])
         b_mult = MatrixMultiply(b, nb, mb);
 
     fprintf(out, "Исходные данные:\n\nМассив A:\n");
-    if (!MatrixOutput(a, na, ma, out))
+    if (MatrixOutput(a, na, ma, out))
         return 1;
 
     fprintf(out, "Исходные данные:\n\nМассив B:\n");
-    if (!MatrixOutput(b, nb, mb, out))
+    if (MatrixOutput(b, nb, mb, out))
         return 1;
 
     if (a_mult == 0 && b_mult == 0) {
@@ -57,13 +57,13 @@ int main(int argc, char* argv[])
     else if (a_mult == 0) {
         fprintf(out, "В матрице A все элементы равны нулю.\n");
         fprintf(out, "Кол-во положительных элементов в каждой строке матрицы B:\n");
-        PositiveElemsOutput(a, na, ma, out);
+        PositiveElemsOutput(b, nb, mb, out);
 
     }
     else if (b_mult == 0) {
         fprintf(out, "В матрице 'B' все элементы равны нулю.\n");
         fprintf(out, "Кол-во положительных элементов в каждой строке матрицы A:\n");
-        PositiveElemsOutput(b, nb, mb, out);
+        PositiveElemsOutput(a, na, ma, out);
     }
     else if (a_mult > b_mult) {
         fprintf(out, "В матрице A произведение элементов больше чем произведение элементов матрицы 'B', которые соответсвенно равны %g и %g\n", a_mult, b_mult);

@@ -5,7 +5,7 @@ int PositiveElemsInARow(double *a, int na) {
     int num = 0;
 
     for (int i = 0; i < na; i++) {
-        if (a[i] > 0)num++;
+        if (a[i] > 0) num++;
     }
 
     return num;
@@ -43,10 +43,8 @@ double MatrixMultiply(double **a, int n, int m) {
 
 
 void PositiveElemsOutput(double **a, int n, int m, FILE* out) {
-    int num = 0;
     for (int i = 0; i < n; i++) {
         fprintf(out, "%3d - строка: %2d\n", i + 1, PositiveElemsInARow(a[i], m));
-        num = 0;
     }
     return;
 }
